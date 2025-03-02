@@ -34,7 +34,8 @@ public class JobSchedule {
     private Employee employee;
     
     private LocalDate date;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

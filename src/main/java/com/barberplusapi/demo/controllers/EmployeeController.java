@@ -103,7 +103,9 @@ public class EmployeeController {
             .collect(Collectors.toList());
 
         if(!jobSchedules.isEmpty()) {
-            timeSlots.remove(jobSchedules.get(0).getTime().toString());
+            timeSlots.removeIf(
+                h -> (h.compareTo(jobSchedules.get(0).getStartTime().toString()) >= 0 && h.compareTo(jobSchedules.get(0).getEndTime().toString()) <= 0)
+            );
         }
         
         return ResponseEntity.ok(timeSlots);

@@ -147,9 +147,10 @@ public class JobService {
         }
 
         JobSchedule jobSchedule = new JobSchedule();
-        jobSchedule.setEmployee(employee.get());
+        jobSchedule.setEmployee(employee.get());    
         jobSchedule.setDate(bookJobDTO.getDate());
-        jobSchedule.setTime(bookJobDTO.getTime());
+        jobSchedule.setStartTime(bookJobDTO.getTime());
+        jobSchedule.setEndTime(bookJobDTO.getTime().plusMinutes(job.get().getDurationMinutes()));
 
         employee.get().getJobSchedules().add(jobSchedule);
 
