@@ -29,6 +29,11 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findById(id);
         return company.map(this::convertToDTO).orElse(null);
     }
+
+    public CompanyDTO getCompanyBySlug(String slug) {
+        Optional<Company> company = companyRepository.findBySlug(slug);
+        return company.map(this::convertToDTO).orElse(null);
+    }
     
     public CompanyDTO createCompany(CompanyDTO companyDTO) {
         Company company = convertToEntity(companyDTO);

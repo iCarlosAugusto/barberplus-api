@@ -2,10 +2,13 @@ package com.barberplusapi.demo.controllers;
 
 import com.barberplusapi.demo.dto.CompanyDTO;
 import com.barberplusapi.demo.services.CompanyService;
+import com.barberplusapi.demo.services.JobService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.barberplusapi.demo.dto.JobDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +18,9 @@ import java.util.UUID;
 public class CompanyController {
 
     private final CompanyService companyService;
+
+    @Autowired
+    private JobService jobService;
     
     @Autowired
     public CompanyController(CompanyService companyService) {
@@ -30,6 +36,15 @@ public class CompanyController {
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDTO> getCompanyById(@PathVariable UUID id) {
         CompanyDTO company = companyService.getCompanyById(id);
+        if (company != null) {
+            return new ResponseEntity<>(company, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<CompanyDTO> getCompanyBySlug(@PathVariable String slug) {
+        CompanyDTO company = companyService.getCompanyBySlug(slug);
         if (company != null) {
             return new ResponseEntity<>(company, HttpStatus.OK);
         }
@@ -64,5 +79,11 @@ public class CompanyController {
     public ResponseEntity<List<CompanyDTO>> searchCompaniesByName(@RequestParam String name) {
         List<CompanyDTO> companies = companyService.searchCompaniesByName(name);
         return new ResponseEntity<>(companies, HttpStatus.OK);
+    }
+
+    @GetMapping("/{companyId}/jobs")
+    public ResponseEntity<List<JobDTO>> getJobsByCompany(@PathVariable UUID companyId) {
+        List<JobDTO> jobs = jobService.getJobsByCompany(companyId);
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 }

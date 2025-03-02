@@ -35,12 +35,6 @@ public class JobController {
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 
-    @GetMapping("/company/{companyId}")
-    public ResponseEntity<List<JobDTO>> getJobsByCompany(@PathVariable UUID companyId) {
-        List<JobDTO> jobs = jobService.getJobsByCompany(companyId);
-        return new ResponseEntity<>(jobs, HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<JobDTO> getJobById(@PathVariable UUID id) {
         JobDTO job = jobService.getJobById(id);
