@@ -3,6 +3,7 @@ package com.barberplusapi.demo.models;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,9 @@ public class Company {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+    
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Employee> employees;
     
     @PrePersist
     protected void onCreate() {
