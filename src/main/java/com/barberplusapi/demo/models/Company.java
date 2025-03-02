@@ -1,0 +1,51 @@
+package com.barberplusapi.demo.models;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.UUID;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "companies")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Company {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    private String description;
+    
+    private String address;
+    
+    private String phone;
+    
+    private String email;
+    
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+} 
