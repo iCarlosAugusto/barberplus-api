@@ -5,31 +5,39 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "jobs")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+public class Job {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     
+    @Column(nullable = false)
     private String name;
-    private String email;
-    private String phone;
-    private String position;
+    
+    private String description;
+    
+    @Column(nullable = false)
+    private BigDecimal price;
+    
+    @Column(nullable = false)
+    private Integer durationMinutes;
+    
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
     
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
-    
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    private List<Job> jobs;
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
