@@ -3,9 +3,12 @@ package com.barberplusapi.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.context.annotation.Import;
+import com.barberplusapi.demo.config.CorsConfig;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@Import(CorsConfig.class)
 public class DemoApplication {
 
 	public static void main(String[] args) {
