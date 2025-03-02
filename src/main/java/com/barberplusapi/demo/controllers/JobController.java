@@ -5,11 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.barberplusapi.demo.dto.BookJobDTO;
 import com.barberplusapi.demo.dto.JobDTO;
+import com.barberplusapi.demo.models.JobSchedule;
 import com.barberplusapi.demo.services.JobService;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -67,5 +72,10 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/book")
+    public JobSchedule bookJob(@RequestBody BookJobDTO bookJobDTO) {
+        return jobService.bookJob(bookJobDTO);
     }
 } 

@@ -1,12 +1,15 @@
 package com.barberplusapi.demo.services;
 
+import com.barberplusapi.demo.dto.BookJobDTO;
 import com.barberplusapi.demo.dto.JobDTO;
 import com.barberplusapi.demo.models.Company;
 import com.barberplusapi.demo.models.Employee;
 import com.barberplusapi.demo.models.Job;
+import com.barberplusapi.demo.models.JobSchedule;
 import com.barberplusapi.demo.repositories.CompanyRepository;
 import com.barberplusapi.demo.repositories.EmployeeRepository;
 import com.barberplusapi.demo.repositories.JobRepository;
+import com.barberplusapi.demo.repositories.JobScheduleRepositoy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -21,6 +24,9 @@ public class JobService {
 
     @Autowired
     private JobRepository jobRepository;
+
+    @Autowired
+    private JobScheduleRepositoy jobScheduleRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -130,5 +136,24 @@ public class JobService {
         }
         
         return job;
+    }
+
+    public JobSchedule bookJob(BookJobDTO bookJobDTO) {
+        Optional<Employee> employee = employeeRepository.findById(bookJobDTO.getEmployeeId());
+        Optional<Job> job = jobRepository.findById(bookJobDTO.getJobId());
+
+        if(employee.isEmpty() || job.isEmpty()) {
+            throw new RuntimeException("Employee or job not found");
+        }
+
+        JobSchedule jobSchedule = new JobSchedule();
+        jobSchedule.setEmployee(employee.get());
+        jobSchedule.setDate(bookJobDTO.getDate());
+        jobSchedule.setTime(bookJobDTO.getTime());
+
+        employee.get().getJobSchedules().add(jobSchedule);
+
+        return jobScheduleRepository.save(jobSchedule);
+        //employeeRepository.save(employee.get());
     }
 } 

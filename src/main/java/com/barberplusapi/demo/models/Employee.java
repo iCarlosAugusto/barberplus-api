@@ -24,6 +24,13 @@ public class Employee {
     private String phone;
     private String position;
     
+    @ElementCollection
+    @CollectionTable(name = "employee_work_schedule", joinColumns = @JoinColumn(name = "employee_id"))
+    private List<WorkSchedule> workSchedule;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<JobSchedule> jobSchedules;
+    
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;

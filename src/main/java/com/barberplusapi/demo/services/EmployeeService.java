@@ -76,6 +76,10 @@ public class EmployeeService {
         return false;
     }
 
+    public Optional<Employee> findById(UUID id) {
+        return employeeRepository.findById(id);
+    }
+
     private EmployeeDTO convertToDTO(Employee employee) {
         EmployeeDTO dto = new EmployeeDTO();
         dto.setId(employee.getId());
@@ -83,6 +87,8 @@ public class EmployeeService {
         dto.setEmail(employee.getEmail());
         dto.setPhone(employee.getPhone());
         dto.setPosition(employee.getPosition());
+        dto.setWorkSchedule(employee.getWorkSchedule());
+        dto.setJobSchedules(employee.getJobSchedules());
         
         if (employee.getCompany() != null) {
             dto.setCompanyId(employee.getCompany().getId());
@@ -97,6 +103,8 @@ public class EmployeeService {
         employee.setEmail(employeeDTO.getEmail());
         employee.setPhone(employeeDTO.getPhone());
         employee.setPosition(employeeDTO.getPosition());
+        employee.setWorkSchedule(employeeDTO.getWorkSchedule());
+        employee.setJobSchedules(employeeDTO.getJobSchedules());
         
         if (employeeDTO.getCompanyId() != null) {
             Optional<Company> company = companyRepository.findById(employeeDTO.getCompanyId());

@@ -1,14 +1,22 @@
 package com.barberplusapi.demo.controllers;
 
 import com.barberplusapi.demo.dto.EmployeeDTO;
+import com.barberplusapi.demo.models.Employee;
+import com.barberplusapi.demo.models.JobSchedule;
+import com.barberplusapi.demo.models.WorkSchedule;
 import com.barberplusapi.demo.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -40,6 +48,10 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        if (employeeDTO.getWorkSchedule() == null) {
+            employeeDTO.setWorkSchedule(new ArrayList<>());
+        }
+        
         EmployeeDTO createdEmployee = employeeService.createEmployee(employeeDTO);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
@@ -60,5 +72,40 @@ public class EmployeeController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    
+    @GetMapping("/{employeeId}/time-slots")
+    public ResponseEntity<List<String>> getEmployeeTimeSlots(
+        @PathVariable UUID employeeId,
+        @RequestParam LocalDate date
+        //@RequestParam LocalTime time
+    ) {
+        Optional<Employee> employeeOptional = employeeService.findById(employeeId);
+
+    
+        if (employeeOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        Employee employee = employeeOptional.get();
+
+        List<JobSchedule> jobSchedules = employee.getJobSchedules().stream().filter(jobScheduleItem -> jobScheduleItem.getDate().equals(date)).collect(Collectors.toList());
+      
+        List<WorkSchedule> workSchedule = employee.getWorkSchedule();
+        
+        if (workSchedule == null) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        
+        List<String> timeSlots = workSchedule.stream()
+            .flatMap(schedule -> schedule.generateTimeSlots().stream())
+            .collect(Collectors.toList());
+
+        if(!jobSchedules.isEmpty()) {
+            timeSlots.remove(jobSchedules.get(0).getTime().toString());
+        }
+        
+        return ResponseEntity.ok(timeSlots);
     }
 } 
