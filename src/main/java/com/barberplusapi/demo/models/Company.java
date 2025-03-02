@@ -22,6 +22,8 @@ public class Company {
     
     @Column(nullable = false)
     private String name;
+
+    private String slug;
     
     private String description;
     

@@ -79,7 +79,6 @@ public class EmployeeController {
     public ResponseEntity<List<String>> getEmployeeTimeSlots(
         @PathVariable UUID employeeId,
         @RequestParam LocalDate date
-        //@RequestParam LocalTime time
     ) {
         Optional<Employee> employeeOptional = employeeService.findById(employeeId);
 

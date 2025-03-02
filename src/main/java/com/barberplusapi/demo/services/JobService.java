@@ -155,6 +155,5 @@ public class JobService {
         employee.get().getJobSchedules().add(jobSchedule);
 
         return jobScheduleRepository.save(jobSchedule);
-        //employeeRepository.save(employee.get());
     }
 } 

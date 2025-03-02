@@ -60,11 +60,11 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
     
-    // Helper methods to convert between Entity and DTO
     private CompanyDTO convertToDTO(Company company) {
         return new CompanyDTO(
                 company.getId(),
                 company.getName(),
+                company.getSlug(),
                 company.getDescription(),
                 company.getAddress(),
                 company.getPhone(),
@@ -82,6 +82,7 @@ public class CompanyService {
         company.setAddress(companyDTO.getAddress());
         company.setPhone(companyDTO.getPhone());
         company.setEmail(companyDTO.getEmail());
+        company.setSlug(companyDTO.getSlug());
         return company;
     }
 } 
