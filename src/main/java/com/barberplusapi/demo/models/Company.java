@@ -72,6 +72,8 @@ public class Company {
         companyResponse.setAddress(address);
         companyResponse.setPhone(phone);
         companyResponse.setEmail(email);
+        companyResponse.setCreatedAt(createdAt);
+        companyResponse.setUpdatedAt(updatedAt);
         companyResponse.setJobs(jobs.stream().map(Job::toResponse).collect(Collectors.toList()));
         companyResponse.setEmployees(employees.stream().map(Employee::toResponse).collect(Collectors.toList()));
         return companyResponse;

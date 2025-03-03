@@ -1,5 +1,6 @@
 package com.barberplusapi.demo.responses;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,4 +22,6 @@ public class CompanyResponse {
     private String email;
     private List<JobResponse> jobs;
     private List<EmployeeResponse> employees;
+    private Date createdAt;
+    private Date updatedAt;
 }
