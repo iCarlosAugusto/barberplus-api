@@ -1,6 +1,8 @@
 package com.barberplusapi.demo.models;
 
 import jakarta.persistence.*;
+import com.barberplusapi.demo.responses.JobResponse;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,5 +53,15 @@ public class Job {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public JobResponse toResponse() {
+        JobResponse jobResponse = new JobResponse();
+        jobResponse.setId(id);
+        jobResponse.setName(name);
+        jobResponse.setDescription(description);
+        jobResponse.setPrice(price);
+        jobResponse.setDurationMinutes(durationMinutes);
+        return jobResponse;
     }
 } 

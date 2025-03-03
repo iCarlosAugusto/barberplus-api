@@ -1,6 +1,7 @@
 package com.barberplusapi.demo.controllers;
 
 import com.barberplusapi.demo.dto.CompanyDTO;
+import com.barberplusapi.demo.responses.CompanyResponse;
 import com.barberplusapi.demo.services.CompanyService;
 import com.barberplusapi.demo.services.JobService;
 
@@ -43,8 +44,8 @@ public class CompanyController {
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<CompanyDTO> getCompanyBySlug(@PathVariable String slug) {
-        CompanyDTO company = companyService.getCompanyBySlug(slug);
+    public ResponseEntity<CompanyResponse> getCompanyBySlug(@PathVariable String slug) {
+        CompanyResponse company = companyService.getCompanyBySlug(slug);
         if (company != null) {
             return new ResponseEntity<>(company, HttpStatus.OK);
         }

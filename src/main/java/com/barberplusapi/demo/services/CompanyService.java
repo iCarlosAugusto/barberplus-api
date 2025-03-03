@@ -3,6 +3,8 @@ package com.barberplusapi.demo.services;
 import com.barberplusapi.demo.dto.CompanyDTO;
 import com.barberplusapi.demo.models.Company;
 import com.barberplusapi.demo.repositories.CompanyRepository;
+import com.barberplusapi.demo.responses.CompanyResponse;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +32,9 @@ public class CompanyService {
         return company.map(this::convertToDTO).orElse(null);
     }
 
-    public CompanyDTO getCompanyBySlug(String slug) {
+    public CompanyResponse getCompanyBySlug(String slug) {
         Optional<Company> company = companyRepository.findBySlug(slug);
-        return company.map(this::convertToDTO).orElse(null);
+        return company.map(Company::toResponse).orElse(null);
     }
     
     public CompanyDTO createCompany(CompanyDTO companyDTO) {

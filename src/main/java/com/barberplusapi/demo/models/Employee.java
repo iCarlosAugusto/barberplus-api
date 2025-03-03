@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.barberplusapi.demo.responses.EmployeeResponse;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -50,5 +52,15 @@ public class Employee {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public EmployeeResponse toResponse(){
+        EmployeeResponse employeeResponse = new EmployeeResponse();
+        employeeResponse.setId(id);
+        employeeResponse.setName(name);
+        employeeResponse.setEmail(email);
+        employeeResponse.setPhone(phone);
+        employeeResponse.setPosition(position);
+        return employeeResponse;
     }
 } 

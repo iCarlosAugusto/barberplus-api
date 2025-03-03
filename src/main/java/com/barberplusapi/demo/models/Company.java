@@ -3,6 +3,10 @@ package com.barberplusapi.demo.models;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import com.barberplusapi.demo.responses.CompanyResponse;
+
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -43,6 +47,9 @@ public class Company {
     
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Employee> employees;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Job> jobs;
     
     @PrePersist
     protected void onCreate() {
@@ -53,5 +60,20 @@ public class Company {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
+    }
+
+
+    public CompanyResponse toResponse() {
+        CompanyResponse companyResponse = new CompanyResponse();
+        companyResponse.setId(id);
+        companyResponse.setName(name);
+        companyResponse.setSlug(slug);
+        companyResponse.setDescription(description);
+        companyResponse.setAddress(address);
+        companyResponse.setPhone(phone);
+        companyResponse.setEmail(email);
+        companyResponse.setJobs(jobs.stream().map(Job::toResponse).collect(Collectors.toList()));
+        companyResponse.setEmployees(employees.stream().map(Employee::toResponse).collect(Collectors.toList()));
+        return companyResponse;
     }
 } 
