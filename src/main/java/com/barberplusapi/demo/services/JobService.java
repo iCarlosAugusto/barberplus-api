@@ -62,6 +62,10 @@ public class JobService {
 
     public JobResponse createJob(CreateJobRequest createJobRequest) {
         Job job = createJobRequest.toEntity();
+
+        Company company = companyRepository.findById(createJobRequest.getCompanyId()).orElseThrow(() -> new RuntimeException("Company not found"));
+        job.setCompany(company);
+
         Job savedJob = jobRepository.save(job);
         return savedJob.toResponse();
     }
