@@ -2,6 +2,7 @@ package com.barberplusapi.demo.controllers;
 
 import com.barberplusapi.demo.dto.CompanyDTO;
 import com.barberplusapi.demo.responses.CompanyResponse;
+import com.barberplusapi.demo.responses.JobResponse;
 import com.barberplusapi.demo.services.CompanyService;
 import com.barberplusapi.demo.services.JobService;
 
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.barberplusapi.demo.dto.JobDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -83,8 +83,8 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}/jobs")
-    public ResponseEntity<List<JobDTO>> getJobsByCompany(@PathVariable UUID companyId) {
-        List<JobDTO> jobs = jobService.getJobsByCompany(companyId);
+    public ResponseEntity<List<JobResponse>> getJobsByCompany(@PathVariable UUID companyId) {
+        List<JobResponse> jobs = jobService.getJobsByCompany(companyId);
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.barberplusapi.demo.responses.EmployeeResponse;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Data
@@ -34,10 +35,18 @@ public class Employee {
     private List<JobSchedule> jobSchedules;
     
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn()
+    @JsonIgnoreProperties("employees")
     private Company company;
     
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @ManyToMany()
+    @JoinTable(
+        name = "employee_jobs",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "job_id")
+    )
+
+    @JsonIgnoreProperties("employees")
     private List<Job> jobs;
     
     private LocalDateTime createdAt;

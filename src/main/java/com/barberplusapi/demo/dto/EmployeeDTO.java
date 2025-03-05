@@ -22,4 +22,5 @@ public class EmployeeDTO {
     private UUID companyId;
     private List<WorkSchedule> workSchedule;
     private List<JobSchedule> jobSchedules;
+    private UUID jobId;
 } 

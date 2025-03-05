@@ -3,8 +3,11 @@ package com.barberplusapi.demo.services;
 import com.barberplusapi.demo.dto.EmployeeDTO;
 import com.barberplusapi.demo.models.Company;
 import com.barberplusapi.demo.models.Employee;
+import com.barberplusapi.demo.models.Job;
 import com.barberplusapi.demo.repositories.CompanyRepository;
 import com.barberplusapi.demo.repositories.EmployeeRepository;
+import com.barberplusapi.demo.repositories.JobRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +25,14 @@ public class EmployeeService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    public List<EmployeeDTO> getAllEmployees() {
-        return employeeRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    @Autowired
+    private JobRepository jobRepository;
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+        // return employeeRepository.findAll().stream()
+        //         .map(this::convertToDTO)
+        //         .collect(Collectors.toList());
     }
 
     public List<EmployeeDTO> getEmployeesByCompany(UUID companyId) {
@@ -45,7 +52,7 @@ public class EmployeeService {
         return convertToDTO(savedEmployee);
     }
 
-    public EmployeeDTO updateEmployee(UUID id, EmployeeDTO employeeDTO) {
+    public EmployeeDTO updateEmployee(UUID id, EmployeeDTO employeeDTO) throws Exception {
         Optional<Employee> existingEmployee = employeeRepository.findById(id);
         
         if (existingEmployee.isPresent()) {
@@ -55,6 +62,11 @@ public class EmployeeService {
             employee.setEmail(employeeDTO.getEmail());
             employee.setPhone(employeeDTO.getPhone());
             employee.setPosition(employeeDTO.getPosition());
+
+            if (employeeDTO.getJobId() != null) {
+                Job job = jobRepository.findById(employeeDTO.getJobId()).orElseThrow(() -> new Exception("Job not found"));
+                employee.getJobs().add(job);
+            }
             
             if (employeeDTO.getCompanyId() != null) {
                 Optional<Company> company = companyRepository.findById(employeeDTO.getCompanyId());

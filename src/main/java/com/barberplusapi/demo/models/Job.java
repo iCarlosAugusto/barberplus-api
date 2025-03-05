@@ -2,6 +2,7 @@ package com.barberplusapi.demo.models;
 
 import jakarta.persistence.*;
 import com.barberplusapi.demo.responses.JobResponse;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +10,10 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "jobs")
@@ -33,9 +37,9 @@ public class Job {
     @Column(nullable = false)
     private Integer durationMinutes;
     
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @ManyToMany(mappedBy = "jobs")
+    @JsonIgnoreProperties("jobs")
+    private List<Employee> employees = new ArrayList<Employee>();
     
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -62,6 +66,7 @@ public class Job {
         jobResponse.setDescription(description);
         jobResponse.setPrice(price);
         jobResponse.setDurationMinutes(durationMinutes);
+        jobResponse.setDoneByEmployees(employees.stream().map(Employee::toResponse).collect(Collectors.toList()));
         return jobResponse;
     }
 } 

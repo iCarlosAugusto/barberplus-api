@@ -18,7 +18,6 @@ public class JobDTO {
     private String description;
     private BigDecimal price;
     private Integer durationMinutes;
-    private UUID employeeId;
     private UUID companyId;
 
 

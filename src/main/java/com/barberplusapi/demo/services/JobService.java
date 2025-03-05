@@ -10,6 +10,9 @@ import com.barberplusapi.demo.repositories.CompanyRepository;
 import com.barberplusapi.demo.repositories.EmployeeRepository;
 import com.barberplusapi.demo.repositories.JobRepository;
 import com.barberplusapi.demo.repositories.JobScheduleRepositoy;
+import com.barberplusapi.demo.request.CreateJobRequest;
+import com.barberplusapi.demo.responses.JobResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -34,59 +37,59 @@ public class JobService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    public List<JobDTO> getAllJobs() {
+    public List<JobResponse> getAllJobs() {
         return jobRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(Job::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<JobDTO> getJobsByEmployee(UUID employeeId) {
-        return jobRepository.findByEmployeeId(employeeId).stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+    // public List<JobResponse> getJobsByEmployee(UUID employeeId) {
+    //     return jobRepository.findByEmployeeId(employeeId).stream()
+    //             .map(Job::toResponse)
+    //             .collect(Collectors.toList());
+    // }
 
-    public List<JobDTO> getJobsByCompany(UUID companyId) {
+    public List<JobResponse> getJobsByCompany(UUID companyId) {
         return jobRepository.findByCompanyId(companyId).stream()
-                .map(this::convertToDTO)
+                .map(Job::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public JobDTO getJobById(UUID id) {
+    public JobResponse getJobById(UUID id) {
         Optional<Job> job = jobRepository.findById(id);
-        return job.map(this::convertToDTO).orElse(null);
+        return job.map(Job::toResponse).orElse(null);
     }
 
-    public JobDTO createJob(JobDTO jobDTO) {
-        Job job = convertToEntity(jobDTO);
+    public JobResponse createJob(CreateJobRequest createJobRequest) {
+        Job job = createJobRequest.toEntity();
         Job savedJob = jobRepository.save(job);
-        return convertToDTO(savedJob);
+        return savedJob.toResponse();
     }
 
     public JobDTO updateJob(UUID id, JobDTO jobDTO) {
-        Optional<Job> existingJob = jobRepository.findById(id);
+        // Optional<Job> existingJob = jobRepository.findById(id);
         
-        if (existingJob.isPresent()) {
-            Job job = existingJob.get();
+        // if (existingJob.isPresent()) {
+        //     Job job = existingJob.get();
             
-            job.setName(jobDTO.getName());
-            job.setDescription(jobDTO.getDescription());
-            job.setPrice(jobDTO.getPrice());
-            job.setDurationMinutes(jobDTO.getDurationMinutes());
+        //     job.setName(jobDTO.getName());
+        //     job.setDescription(jobDTO.getDescription());
+        //     job.setPrice(jobDTO.getPrice());
+        //     job.setDurationMinutes(jobDTO.getDurationMinutes());
             
-            if (jobDTO.getEmployeeId() != null) {
-                Optional<Employee> employee = employeeRepository.findById(jobDTO.getEmployeeId());
-                employee.ifPresent(job::setEmployee);
-            }
+        //     if (jobDTO.getEmployeeId() != null) {
+        //         Optional<Employee> employee = employeeRepository.findById(jobDTO.getEmployeeId());
+        //         employee.ifPresent(job::addEmployee);
+        //     }
             
-            if (jobDTO.getCompanyId() != null) {
-                Optional<Company> company = companyRepository.findById(jobDTO.getCompanyId());
-                company.ifPresent(job::setCompany);
-            }
+        //     if (jobDTO.getCompanyId() != null) {
+        //         Optional<Company> company = companyRepository.findById(jobDTO.getCompanyId());
+        //         company.ifPresent(job::setCompany);
+        //     }
             
-            Job updatedJob = jobRepository.save(job);
-            return convertToDTO(updatedJob);
-        }
+        //     Job updatedJob = jobRepository.save(job);
+        //     return convertToDTO(updatedJob);
+        // }
         
         return null;
     }
@@ -99,44 +102,44 @@ public class JobService {
         return false;
     }
 
-    private JobDTO convertToDTO(Job job) {
-        JobDTO dto = new JobDTO();
-        dto.setId(job.getId());
-        dto.setName(job.getName());
-        dto.setDescription(job.getDescription());
-        dto.setPrice(job.getPrice());
-        dto.setDurationMinutes(job.getDurationMinutes());
+    // private JobDTO convertToDTO(Job job) {
+    //     JobDTO dto = new JobDTO();
+    //     dto.setId(job.getId());
+    //     dto.setName(job.getName());
+    //     dto.setDescription(job.getDescription());
+    //     dto.setPrice(job.getPrice());
+    //     dto.setDurationMinutes(job.getDurationMinutes());
         
-        if (job.getEmployee() != null) {
-            dto.setEmployeeId(job.getEmployee().getId());
-        }
+    //     if (job.getEmployees() != null) {
+    //         dto.setEmployeeId(job.getEmployees().get(0).getId());
+    //     }
         
-        if (job.getCompany() != null) {
-            dto.setCompanyId(job.getCompany().getId());
-        }
+    //     if (job.getCompany() != null) {
+    //         dto.setCompanyId(job.getCompany().getId());
+    //     }
         
-        return dto;
-    }
+    //     return dto;
+    // }
 
-    private Job convertToEntity(JobDTO jobDTO) {
-        Job job = new Job();
-        job.setName(jobDTO.getName());
-        job.setDescription(jobDTO.getDescription());
-        job.setPrice(jobDTO.getPrice());
-        job.setDurationMinutes(jobDTO.getDurationMinutes());
+    // private Job convertToEntity(JobDTO jobDTO) {
+    //     Job job = new Job();
+    //     job.setName(jobDTO.getName());
+    //     job.setDescription(jobDTO.getDescription());
+    //     job.setPrice(jobDTO.getPrice());
+    //     job.setDurationMinutes(jobDTO.getDurationMinutes());
         
-        if (jobDTO.getEmployeeId() != null) {
-            Optional<Employee> employee = employeeRepository.findById(jobDTO.getEmployeeId());
-            employee.ifPresent(job::setEmployee);
-        }
+    //     if (jobDTO.getEmployeeId() != null) {
+    //         Optional<Employee> employee = employeeRepository.findById(jobDTO.getEmployeeId());
+    //         employee.ifPresent(job::addEmployee);
+    //     }
         
-        if (jobDTO.getCompanyId() != null) {
-            Optional<Company> company = companyRepository.findById(jobDTO.getCompanyId());
-            company.ifPresent(job::setCompany);
-        }
+    //     if (jobDTO.getCompanyId() != null) {
+    //         Optional<Company> company = companyRepository.findById(jobDTO.getCompanyId());
+    //         company.ifPresent(job::setCompany);
+    //     }
         
-        return job;
-    }
+    //     return job;
+    // }
 
     public JobSchedule bookJob(BookJobDTO bookJobDTO) {
         Optional<Employee> employee = employeeRepository.findById(bookJobDTO.getEmployeeId());
