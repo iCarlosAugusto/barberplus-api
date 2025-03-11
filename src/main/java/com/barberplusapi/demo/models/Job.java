@@ -2,6 +2,7 @@ package com.barberplusapi.demo.models;
 
 import jakarta.persistence.*;
 import com.barberplusapi.demo.responses.JobResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -38,10 +39,11 @@ public class Job {
     private Integer durationMinutes;
     
     @ManyToMany(mappedBy = "jobs")
-    @JsonIgnoreProperties("jobs")
+    @JsonIgnoreProperties({"jobs", "company"})
     private List<Employee> employees = new ArrayList<Employee>();
     
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "company_id")
     private Company company;
     
