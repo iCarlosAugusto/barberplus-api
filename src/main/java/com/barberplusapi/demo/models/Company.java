@@ -3,7 +3,6 @@ package com.barberplusapi.demo.models;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.barberplusapi.demo.responses.CompanyResponse;
 
@@ -74,8 +73,6 @@ public class Company {
         companyResponse.setEmail(email);
         companyResponse.setCreatedAt(createdAt);
         companyResponse.setUpdatedAt(updatedAt);
-        companyResponse.setJobs(jobs.stream().map(Job::toResponse).collect(Collectors.toList()));
-        companyResponse.setEmployees(employees.stream().map(Employee::toResponse).collect(Collectors.toList()));
         return companyResponse;
     }
 } 
