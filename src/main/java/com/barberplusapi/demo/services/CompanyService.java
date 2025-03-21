@@ -77,7 +77,8 @@ public class CompanyService {
                 company.getPhone(),
                 company.getEmail(),
                 company.getCreatedAt(),
-                company.getUpdatedAt()
+                company.getUpdatedAt(),
+                company.getWorkSchedule()
         );
     }
     
@@ -90,6 +91,7 @@ public class CompanyService {
         company.setPhone(companyDTO.getPhone());
         company.setEmail(companyDTO.getEmail());
         company.setSlug(companyDTO.getSlug());
+        company.setWorkSchedule(companyDTO.getWorkSchedule());
         return company;
     }
 } 

@@ -35,6 +35,10 @@ public class Company {
     private String phone;
     
     private String email;
+
+    @ElementCollection
+    @CollectionTable(name = "company_work_schedule", joinColumns = @JoinColumn(name = "company_id"))
+    private List<WorkSchedule> workSchedule;
     
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)

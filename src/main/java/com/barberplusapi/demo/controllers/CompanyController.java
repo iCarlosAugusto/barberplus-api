@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,13 +107,32 @@ public class CompanyController {
     @GetMapping("/{companyId}/time-slots")
     public ResponseEntity<List<String>> getAvailableTimeSlots(
         @PathVariable UUID companyId,
-        @RequestParam LocalDate date
+        @RequestParam LocalDate date,
+        @RequestParam LocalTime hours
     ) {
         LocalDate today = LocalDate.now();
         if(date.isBefore(today)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A data não pode ser anterior a hoje");
         }
+
+        CompanyDTO company = companyService.getCompanyById(companyId);
+        if(company == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada");
+        }
         
+        WorkSchedule companyWorkSchedule = company.getWorkSchedule().stream()
+            .filter(schedule -> schedule.getDayOfWeek().equals(date.getDayOfWeek()))
+            .findFirst()
+            .orElse(null);
+        
+        if(companyWorkSchedule == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A empresa não tem um horário de funcionamento definido para a data selecionada");
+        }
+
+        if(hours.isBefore(companyWorkSchedule.getStartTime()) || hours.isAfter(companyWorkSchedule.getEndTime())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário selecionado não está dentro do horário de funcionamento da empresa");
+        }
+
         List<EmployeeDTO> employees = employeeService.getEmployeesByCompany(companyId);
         if (employees.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
@@ -139,7 +159,10 @@ public class CompanyController {
                     List<String> employeeSlots = workSchedule.stream()
                         .flatMap(schedule -> schedule.generateTimeSlots().stream())
                         .collect(Collectors.toList());
-                    
+
+                    //Remove before hours param
+                    employeeSlots.removeIf(slot -> slot.compareTo(hours.toString()) < 0);
+
                     // Removendo slots que já estão agendados
                     if (!jobSchedules.isEmpty()) {
                         for (JobSchedule jobSchedule : jobSchedules) {
