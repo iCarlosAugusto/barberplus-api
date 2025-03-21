@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -107,11 +108,15 @@ public class CompanyController {
         @PathVariable UUID companyId,
         @RequestParam LocalDate date
     ) {
-        List<EmployeeDTO> employees = employeeService.getEmployeesByCompany(companyId);
+        LocalDate today = LocalDate.now();
+        if(date.isBefore(today)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A data não pode ser anterior a hoje");
+        }
         
+        List<EmployeeDTO> employees = employeeService.getEmployeesByCompany(companyId);
         if (employees.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
-        }
+        }   
         
         // Coletando todos os slots disponíveis de todos os funcionários
         List<String> allAvailableSlots = new ArrayList<>();
