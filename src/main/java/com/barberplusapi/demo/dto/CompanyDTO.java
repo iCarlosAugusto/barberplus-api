@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.UUID;
+import java.util.List;
+import com.barberplusapi.demo.models.WorkSchedule;
 
 @Data
 @NoArgsConstructor
@@ -19,4 +21,5 @@ public class CompanyDTO {
     private String email;
     private Date createdAt;
     private Date updatedAt;
+    private List<WorkSchedule> workSchedule;
 } 
