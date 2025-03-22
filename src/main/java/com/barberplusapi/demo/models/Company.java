@@ -77,6 +77,7 @@ public class Company {
         companyResponse.setEmail(email);
         companyResponse.setCreatedAt(createdAt);
         companyResponse.setUpdatedAt(updatedAt);
+        companyResponse.setWorkSchedule(workSchedule);
         return companyResponse;
     }
 } 

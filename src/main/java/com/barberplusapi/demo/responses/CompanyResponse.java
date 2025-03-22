@@ -1,7 +1,10 @@
 package com.barberplusapi.demo.responses;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+
+import com.barberplusapi.demo.models.WorkSchedule;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,4 +24,5 @@ public class CompanyResponse {
     private String email;
     private Date createdAt;
     private Date updatedAt;
+    private List<WorkSchedule> workSchedule;
 }
