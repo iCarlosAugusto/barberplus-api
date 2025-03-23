@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.barberplusapi.demo.models.JobSchedule;
-import com.barberplusapi.demo.models.WorkSchedule;
+import com.barberplusapi.demo.models.WorkScheduleTeste;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class EmployeeDTO {
     private String phone;
     private String position;
     private UUID companyId;
-    private List<WorkSchedule> workSchedule;
+    private List<WorkScheduleTeste> workSchedule;
     private List<JobSchedule> jobSchedules;
     private UUID jobId;
 } 

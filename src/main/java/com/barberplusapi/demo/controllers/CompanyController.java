@@ -5,6 +5,7 @@ import com.barberplusapi.demo.dto.EmployeeDTO;
 import com.barberplusapi.demo.models.Employee;
 import com.barberplusapi.demo.models.JobSchedule;
 import com.barberplusapi.demo.models.WorkSchedule;
+import com.barberplusapi.demo.models.WorkScheduleTeste;
 import com.barberplusapi.demo.responses.CompanyResponse;
 import com.barberplusapi.demo.responses.JobResponse;
 import com.barberplusapi.demo.services.CompanyService;
@@ -105,7 +106,7 @@ public class CompanyController {
 
 
     @GetMapping("/{companyId}/time-slots")
-    public ResponseEntity<List<String>> getAvailableTimeSlots(
+    public ResponseEntity<List<LocalTime>> getAvailableTimeSlots(
         @PathVariable UUID companyId,
         @RequestParam LocalDate date,
         @RequestParam LocalTime hours
@@ -123,11 +124,7 @@ public class CompanyController {
         WorkSchedule companyWorkSchedule = company.getWorkSchedule().stream()
             .filter(schedule -> schedule.getDayOfWeek().equals(date.getDayOfWeek()))
             .findFirst()
-            .orElse(null);
-        
-        if(companyWorkSchedule == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A empresa não tem um horário de funcionamento definido para a data selecionada");
-        }
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "A empresa não tem um horário de funcionamento definido para a data selecionada"));
 
         if(hours.isBefore(companyWorkSchedule.getStartTime()) || hours.isAfter(companyWorkSchedule.getEndTime())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário selecionado não está dentro do horário de funcionamento da empresa");
@@ -139,7 +136,7 @@ public class CompanyController {
         }   
         
         // Coletando todos os slots disponíveis de todos os funcionários
-        List<String> allAvailableSlots = new ArrayList<>();
+        List<LocalTime> allAvailableSlots = new ArrayList<>();
         
         for (EmployeeDTO employeeDTO : employees) {
             Optional<Employee> employeeOptional = employeeService.findById(employeeDTO.getId());
@@ -152,23 +149,28 @@ public class CompanyController {
                     .filter(jobSchedule -> jobSchedule.getDate().equals(date))
                     .collect(Collectors.toList());
                 
-                List<WorkSchedule> workSchedule = employee.getWorkSchedule();
+                List<WorkScheduleTeste> workSchedule = employee.getWorkSchedule();
                 
                 if (workSchedule != null && !workSchedule.isEmpty()) {
                     // Gerando todos os slots de tempo para o funcionário
-                    List<String> employeeSlots = workSchedule.stream()
-                        .flatMap(schedule -> schedule.generateTimeSlots().stream())
+                    // List<LocalTime> employeeSlots = workSchedule.stream()
+                    //     .flatMap(schedule -> schedule.generateTimeSlots().stream())
+                    //     .collect(Collectors.toList());
+
+                    List<LocalTime> employeeSlots = workSchedule.stream()
+                        .filter(el -> el.getDayOfWeek().equals(date.getDayOfWeek()))
+                        .flatMap(el -> el.generateTimeSlots().stream())
                         .collect(Collectors.toList());
 
                     //Remove before hours param
-                    employeeSlots.removeIf(slot -> slot.compareTo(hours.toString()) < 0);
+                    employeeSlots.removeIf(slot -> slot.compareTo(hours) < 0);
 
                     // Removendo slots que já estão agendados
                     if (!jobSchedules.isEmpty()) {
                         for (JobSchedule jobSchedule : jobSchedules) {
                             employeeSlots.removeIf(slot -> 
-                                slot.compareTo(jobSchedule.getStartTime().toString()) >= 0 && 
-                                slot.compareTo(jobSchedule.getEndTime().toString()) < 0
+                                slot.compareTo(jobSchedule.getStartTime()) >= 0 && 
+                                slot.compareTo(jobSchedule.getEndTime()) < 0
                             );
                         }
                     }
@@ -180,7 +182,7 @@ public class CompanyController {
         }
         
         // Removendo duplicatas e ordenando
-        List<String> uniqueSlots = allAvailableSlots.stream()
+        List<LocalTime> uniqueSlots = allAvailableSlots.stream()
             .distinct()
             .sorted()
             .collect(Collectors.toList());

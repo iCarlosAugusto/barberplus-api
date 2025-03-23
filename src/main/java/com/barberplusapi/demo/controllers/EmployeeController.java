@@ -3,7 +3,7 @@ package com.barberplusapi.demo.controllers;
 import com.barberplusapi.demo.dto.EmployeeDTO;
 import com.barberplusapi.demo.models.Employee;
 import com.barberplusapi.demo.models.JobSchedule;
-import com.barberplusapi.demo.models.WorkSchedule;
+import com.barberplusapi.demo.models.WorkScheduleTeste;
 import com.barberplusapi.demo.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +77,7 @@ public class EmployeeController {
 
     
     @GetMapping("/{employeeId}/time-slots")
-    public ResponseEntity<List<String>> getEmployeeTimeSlots(
+    public ResponseEntity<List<LocalTime>> getEmployeeTimeSlots(
         @PathVariable UUID employeeId,
         @RequestParam LocalDate date
     ) {
@@ -91,19 +92,21 @@ public class EmployeeController {
 
         List<JobSchedule> jobSchedules = employee.getJobSchedules().stream().filter(jobScheduleItem -> jobScheduleItem.getDate().equals(date)).collect(Collectors.toList());
       
-        List<WorkSchedule> workSchedule = employee.getWorkSchedule();
+        List<WorkScheduleTeste> workSchedule = employee.getWorkSchedule();
         
         if (workSchedule == null) {
             return ResponseEntity.ok(Collections.emptyList());
         }
         
-        List<String> timeSlots = workSchedule.stream()
-            .flatMap(schedule -> schedule.generateTimeSlots().stream())
+        List<LocalTime> timeSlots = workSchedule.stream()
+            .filter(el -> el.getDayOfWeek().equals(date.getDayOfWeek()))
+            .flatMap(el -> el.generateTimeSlots().stream())
             .collect(Collectors.toList());
+
 
         if(!jobSchedules.isEmpty()) {
             timeSlots.removeIf(
-                h -> (h.compareTo(jobSchedules.get(0).getStartTime().toString()) >= 0 && h.compareTo(jobSchedules.get(0).getEndTime().toString()) <= 0)
+                h -> (h.compareTo(jobSchedules.get(0).getStartTime()) >= 0 && h.compareTo(jobSchedules.get(0).getEndTime()) <= 0)
             );
         }
         

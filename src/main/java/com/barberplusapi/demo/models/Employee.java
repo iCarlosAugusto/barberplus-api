@@ -29,7 +29,7 @@ public class Employee {
     
     @ElementCollection
     @CollectionTable(name = "employee_work_schedule", joinColumns = @JoinColumn(name = "employee_id"))
-    private List<WorkSchedule> workSchedule;
+    private List<WorkScheduleTeste> workSchedule;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<JobSchedule> jobSchedules;
