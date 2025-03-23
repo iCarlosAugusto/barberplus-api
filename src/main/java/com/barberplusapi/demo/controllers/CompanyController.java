@@ -2,7 +2,6 @@ package com.barberplusapi.demo.controllers;
 
 import com.barberplusapi.demo.dto.CompanyDTO;
 import com.barberplusapi.demo.dto.EmployeeDTO;
-import com.barberplusapi.demo.models.Employee;
 import com.barberplusapi.demo.models.JobSchedule;
 import com.barberplusapi.demo.models.WorkSchedule;
 import com.barberplusapi.demo.models.WorkScheduleTeste;
@@ -23,7 +22,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -138,55 +136,39 @@ public class CompanyController {
         // Coletando todos os slots disponíveis de todos os funcionários
         List<LocalTime> allAvailableSlots = new ArrayList<>();
         
-        for (EmployeeDTO employeeDTO : employees) {
-            Optional<Employee> employeeOptional = employeeService.findById(employeeDTO.getId());
-            
-            if (employeeOptional.isPresent()) {
-                Employee employee = employeeOptional.get();
+        for (EmployeeDTO employee : employees) {
                 
                 // Filtrando agendamentos para a data específica
-                List<JobSchedule> jobSchedules = employee.getJobSchedules().stream()
-                    .filter(jobSchedule -> jobSchedule.getDate().equals(date))
+            List<JobSchedule> jobSchedules = employee.getJobSchedules().stream()
+                .filter(jobSchedule -> jobSchedule.getDate().equals(date))
+                .collect(Collectors.toList());
+                
+            List<WorkScheduleTeste> workSchedule = employee.getWorkSchedule();
+                
+            if (workSchedule != null && !workSchedule.isEmpty()) {
+                List<LocalTime> employeeSlots = workSchedule.stream()
+                    .filter(el -> el.getDayOfWeek().equals(date.getDayOfWeek()))
+                    .flatMap(el -> el.generateTimeSlots().stream())
                     .collect(Collectors.toList());
-                
-                List<WorkScheduleTeste> workSchedule = employee.getWorkSchedule();
-                
-                if (workSchedule != null && !workSchedule.isEmpty()) {
-                    // Gerando todos os slots de tempo para o funcionário
-                    // List<LocalTime> employeeSlots = workSchedule.stream()
-                    //     .flatMap(schedule -> schedule.generateTimeSlots().stream())
-                    //     .collect(Collectors.toList());
 
-                    List<LocalTime> employeeSlots = workSchedule.stream()
-                        .filter(el -> el.getDayOfWeek().equals(date.getDayOfWeek()))
-                        .flatMap(el -> el.generateTimeSlots().stream())
-                        .collect(Collectors.toList());
-
-                    //Remove before hours param
-                    employeeSlots.removeIf(slot -> slot.compareTo(hours) < 0);
+                //Remove before hours param
+                employeeSlots.removeIf(slot -> slot.compareTo(hours) < 0);
 
                     // Removendo slots que já estão agendados
-                    if (!jobSchedules.isEmpty()) {
-                        for (JobSchedule jobSchedule : jobSchedules) {
-                            employeeSlots.removeIf(slot -> 
-                                slot.compareTo(jobSchedule.getStartTime()) >= 0 && 
-                                slot.compareTo(jobSchedule.getEndTime()) < 0
-                            );
-                        }
+                if (!jobSchedules.isEmpty()) {
+                    for (JobSchedule jobSchedule : jobSchedules) {
+                        employeeSlots.removeIf(slot -> 
+                            slot.compareTo(jobSchedule.getStartTime()) >= 0 && 
+                            slot.compareTo(jobSchedule.getEndTime()) < 0
+                        );
                     }
-                    
-                    // Adicionando os slots disponíveis à lista geral
-                    allAvailableSlots.addAll(employeeSlots);
                 }
+                    
+                // Adicionando os slots disponíveis à lista geral
+                allAvailableSlots.addAll(employeeSlots);
             }
         }
         
-        // Removendo duplicatas e ordenando
-        List<LocalTime> uniqueSlots = allAvailableSlots.stream()
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
-        
-        return ResponseEntity.ok(uniqueSlots);
+        return ResponseEntity.ok(allAvailableSlots);
     }
 }
