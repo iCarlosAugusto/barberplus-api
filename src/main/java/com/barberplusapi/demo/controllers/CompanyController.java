@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -104,7 +105,7 @@ public class CompanyController {
 
 
     @GetMapping("/{companyId}/time-slots")
-    public ResponseEntity<List<LocalTime>> getAvailableTimeSlots(
+    public ResponseEntity<List<String>> getAvailableTimeSlots(
         @PathVariable UUID companyId,
         @RequestParam LocalDate date,
         @RequestParam LocalTime hours
@@ -168,7 +169,8 @@ public class CompanyController {
                 allAvailableSlots.addAll(employeeSlots);
             }
         }
-        
-        return ResponseEntity.ok(allAvailableSlots);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        List<String> res = allAvailableSlots.stream().map(el -> el.format(formatter)).collect(Collectors.toList());
+        return ResponseEntity.ok(res);
     }
 }

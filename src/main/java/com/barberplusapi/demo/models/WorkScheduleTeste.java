@@ -3,6 +3,7 @@ package com.barberplusapi.demo.models;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class WorkScheduleTeste {
         LocalTime current = startTime;
         
         while (!current.isAfter(endTime)) {
-            timeSlots.add(current);
+            timeSlots.add(current.truncatedTo(ChronoUnit.MINUTES));
             current = current.plus(Duration.ofMinutes(10));
         }
 
