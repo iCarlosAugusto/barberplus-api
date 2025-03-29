@@ -33,13 +33,13 @@ public class EmployeeController {
     }
 
     @GetMapping("/company/{companyId}")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeesByCompany(@PathVariable UUID companyId) {
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesByCompany(@PathVariable("companyId") UUID companyId) {
         List<EmployeeDTO> employees = employeeService.getEmployeesByCompany(companyId);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable UUID id) {
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable("id") UUID id) {
         EmployeeDTO employee = employeeService.getEmployeeById(id);
         if (employee != null) {
             return new ResponseEntity<>(employee, HttpStatus.OK);
@@ -58,7 +58,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable UUID id, @RequestBody EmployeeDTO employeeDTO) throws Exception {
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") UUID id, @RequestBody EmployeeDTO employeeDTO) throws Exception {
         EmployeeDTO updatedEmployee = employeeService.updateEmployee(id, employeeDTO);
         if (updatedEmployee != null) {
             return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
@@ -67,7 +67,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteEmployee(@PathVariable("id") UUID id) {
         boolean deleted = employeeService.deleteEmployee(id);
         if (deleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -78,8 +78,8 @@ public class EmployeeController {
     
     @GetMapping("/{employeeId}/time-slots")
     public ResponseEntity<List<LocalTime>> getEmployeeTimeSlots(
-        @PathVariable UUID employeeId,
-        @RequestParam LocalDate date
+        @PathVariable("employeeId") UUID employeeId,
+        @RequestParam("date") LocalDate date
     ) {
         Optional<Employee> employeeOptional = employeeService.findById(employeeId);
 

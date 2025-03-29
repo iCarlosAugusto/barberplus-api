@@ -42,13 +42,13 @@ public class JobController {
     // }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<Job>> getJobsByEmployee(@PathVariable UUID employeeId) {
+    public ResponseEntity<List<Job>> getJobsByEmployee(@PathVariable("employeeId") UUID employeeId) {
         List<Job> jobs = jobRepository.findAll();
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobResponse> getJobById(@PathVariable UUID id) {
+    public ResponseEntity<JobResponse> getJobById(@PathVariable("id") UUID id) {
         JobResponse job = jobService.getJobById(id);
         if (job != null) {
             return new ResponseEntity<>(job, HttpStatus.OK);
@@ -72,7 +72,7 @@ public class JobController {
     // }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteJob(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteJob(@PathVariable("id") UUID id) {
         boolean deleted = jobService.deleteJob(id);
         if (deleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

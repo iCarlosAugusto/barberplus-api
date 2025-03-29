@@ -50,7 +50,7 @@ public class CompanyController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyDTO> getCompanyById(@PathVariable UUID id) {
+    public ResponseEntity<CompanyDTO> getCompanyById(@PathVariable("id") UUID id) {
         CompanyDTO company = companyService.getCompanyById(id);
         if (company != null) {
             return new ResponseEntity<>(company, HttpStatus.OK);
@@ -59,7 +59,7 @@ public class CompanyController {
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<CompanyResponse> getCompanyBySlug(@PathVariable String slug) {
+    public ResponseEntity<CompanyResponse> getCompanyBySlug(@PathVariable("slug") String slug) {
         CompanyResponse company = companyService.getCompanyBySlug(slug);
         if (company != null) {
             return new ResponseEntity<>(company, HttpStatus.OK);
@@ -74,7 +74,7 @@ public class CompanyController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable UUID id, @RequestBody CompanyDTO companyDTO) {
+    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable("id") UUID id, @RequestBody CompanyDTO companyDTO) {
         CompanyDTO updatedCompany = companyService.updateCompany(id, companyDTO);
         if (updatedCompany != null) {
             return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
@@ -83,7 +83,7 @@ public class CompanyController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteCompany(@PathVariable("id") UUID id) {
         boolean deleted = companyService.deleteCompany(id);
         if (deleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -92,13 +92,13 @@ public class CompanyController {
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<CompanyDTO>> searchCompaniesByName(@RequestParam String name) {
+    public ResponseEntity<List<CompanyDTO>> searchCompaniesByName(@RequestParam("name") String name) {
         List<CompanyDTO> companies = companyService.searchCompaniesByName(name);
         return new ResponseEntity<>(companies, HttpStatus.OK);
     }
 
     @GetMapping("/{companyId}/jobs")
-    public ResponseEntity<List<JobResponse>> getJobsByCompany(@PathVariable UUID companyId) {
+    public ResponseEntity<List<JobResponse>> getJobsByCompany(@PathVariable("companyId") UUID companyId) {
         List<JobResponse> jobs = jobService.getJobsByCompany(companyId);
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
@@ -106,9 +106,9 @@ public class CompanyController {
 
     @GetMapping("/{companyId}/time-slots")
     public ResponseEntity<List<String>> getAvailableTimeSlots(
-        @PathVariable UUID companyId,
-        @RequestParam LocalDate date,
-        @RequestParam LocalTime hours
+        @PathVariable("companyId") UUID companyId,
+        @RequestParam("date") LocalDate date,
+        @RequestParam("hours") LocalTime hours
     ) {
         LocalDate today = LocalDate.now();
         if(date.isBefore(today)) {
